@@ -1,2 +1,2 @@
 Author: Joshua Alana
-Collaborator: Lydia Sobuola
+Collaborator: Lydia Subuola

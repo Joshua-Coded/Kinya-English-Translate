@@ -1,29 +1,16 @@
 import requests
-from bs4 import BeautifulSoup
+from io import BytesIO
+from pdfminer.high_level import extract_text
 
-url = "http://morganinafrica.blogspot.com/2006/02/rwandan-dictionary-kinyarwanda-english.html"
+# URL of the PDF file to download
+pdf_url = "https://www.rcsdk12.org/cms/lib04/NY01001156/Centricity/Domain/4194/english-kinyarwanda-dictionary.pdf"
 
-# Send a GET request to the URL
-response = requests.get(url)
+# Download the PDF file and save its contents to a BytesIO buffer
+response = requests.get(pdf_url)
+pdf_buffer = BytesIO(response.content)
 
-# Use BeautifulSoup to parse the HTML content
-soup = BeautifulSoup(response.content, 'html.parser')
+# Extract the text from the PDF file using pdfminer
+text = extract_text(pdf_buffer)
 
-# Find the table containing the dictionary entries
-table = soup.find('table', {'class': 'tr-caption-container'})
-
-# Extract the rows of the table
-rows = table.find_all('tr')
-
-# Iterate over the rows and extract the Kinyarwanda-English pairs
-for row in rows:
-    # Get all the table cells in this row
-    cells = row.find_all('td')
-    
-    # Check if this row has two cells (Kinyarwanda and English)
-    if len(cells) == 2:
-        kinyarwanda = cells[0].get_text().strip()
-        english = cells[1].get_text().strip()
-        
-        # Do something with the extracted Kinyarwanda-English pair
-        print(f'Kinyarwanda: {kinyarwanda}, English: {english}')
+# Print the extracted text to the console
+print(text)
