@@ -1,20 +1,28 @@
 import pandas as pd
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# Load the scraped data into a DataFrame
-df = pd.read_csv('english-kinyarwanda-dictionary.csv')
+# Load pre-trained model
+model = load_model('model.h5')
 
-# Rename the 'DICTIONARY' column to 'English'
-df = df.rename(columns={'DICTIONARY': 'English'})
+# Load test dataset
+test_df = pd.read_csv('preprocessed_english_kinyarwanda_dictionary.csv')
 
-# Convert the 'English' column to lowercase
-df['English'] = df['English'].str.lower()
+# Remove 'Kinyarwanda' column
+if 'Kinyarwanda' in test_df.columns:
+    test_df = test_df.drop(columns=['Kinyarwanda'])
 
-# Check if 'Kinyarwanda' column exists, rename it if necessary
-if 'KINYARWANDA' in df.columns:
-    df = df.rename(columns={'KINYARWANDA': 'Kinyarwanda'})
+# Convert text to sequence
+test_sequences = [text.split() for text in test_df['English']]
+test_sequences = [[word_index.get(word.lower(), 1) for word in seq] for seq in test_sequences]
+test_sequences = pad_sequences(test_sequences, padding='post')
 
-# Drop any rows with missing values
-df = df.dropna()
+# Make prediction
+predictions = model.predict(test_sequences)
 
-# Save the preprocessed data to a new CSV file
-df.to_csv('preprocessed_english_kinyarwanda_dictionary.csv', index=False)
+# Convert prediction to text
+y_pred = [' '.join([reverse_word_index.get(idx, '<UNK>') for idx in seq]) for seq in predictions.argmax(axis=1)]
+
+# Save predictions to CSV file
+test_df['Kinyarwanda'] = y_pred
+test_df.to_csv('preprocessed_english_kinyarwanda_dictionary.csv', index=False)
