@@ -9,6 +9,10 @@ df = df.rename(columns={'DICTIONARY': 'English'})
 # Convert the 'English' column to lowercase
 df['English'] = df['English'].str.lower()
 
+# Check if 'Kinyarwanda' column exists, rename it if necessary
+if 'KINYARWANDA' in df.columns:
+    df = df.rename(columns={'KINYARWANDA': 'Kinyarwanda'})
+
 # Drop any rows with missing values
 df = df.dropna()
 
