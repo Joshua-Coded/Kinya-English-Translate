@@ -1,17 +1,23 @@
 import requests
 from bs4 import BeautifulSoup
+import csv
 
-# Define the URL of the webpage to scrape
-url = "https://example.com"
-
-# Send a request to the webpage and get the HTML response
+# Make a request to the webpage
+url = 'https://www.scribd.com/book/391694700/Kinyarwanda-English-English-Kinyarwanda-Dictionary-Phrasebook'
 response = requests.get(url)
 
-# Use BeautifulSoup to parse the HTML response
-soup = BeautifulSoup(response.content, "html.parser")
+# Parse the HTML content using Beautiful Soup
+soup = BeautifulSoup(response.content, 'html.parser')
 
-# Find the first link in the webpage
-first_link = soup.find("a")["href"]
+# Find all the dictionary entries
+entries = soup.find_all('div', class_='outer-text')
 
-# Print the first link
-print(first_link)
+# Extract the Kinyarwanda and English words and phrases, and save to a CSV file
+with open('kinyarwanda_english_dictionary.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['Kinyarwanda', 'English'])
+    
+    for entry in entries:
+        kinyarwanda = entry.find('div', class_='src').get_text().strip()
+        english = entry.find('div', class_='trg').get_text().strip()
+        writer.writerow([kinyarwanda, english])
