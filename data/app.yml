@@ -4,20 +4,22 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-# Request 2 parallel jobs
+jobs:
+- job: deploy
+  displayName: 'Deploy application'
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.8'
+      addToPath: true
 
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+    displayName: 'Install dependencies'
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.8'
-    addToPath: true
-
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
-
-- script: |
-    python app.py
-  displayName: 'Run application'
+  - script: |
+      python app.py
+    displayName: 'Run application'
