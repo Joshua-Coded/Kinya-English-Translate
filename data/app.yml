@@ -4,6 +4,9 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+# Request 2 parallel jobs
+parallel: 2
+
 steps:
 - task: UsePythonVersion@0
   inputs:
