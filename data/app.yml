@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 # Request 2 parallel jobs
-parallel: 1
+
 
 steps:
 - task: UsePythonVersion@0
