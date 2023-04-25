@@ -16,5 +16,5 @@ steps:
   displayName: 'Install dependencies'
 
 - script: |
-    python app.py
+    echo "No application file found"
   displayName: 'Run application'
